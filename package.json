@@ -1,0 +1,25 @@
+{
+  "name": "invisual-disparity",
+  "version": "1.0.0",
+  "description": "A self-hostable, Docker-deployable Visual Paradigm alternative for UML, ERD, and visual software architecture modeling",
+  "scripts": {
+    "build:client": "cd client && npm install && npm run build",
+    "build:server": "cd server && npm install && npm run build",
+    "build": "npm run build:client && npm run build:server",
+    "start": "node server/dist/index.js",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev"
+  },
+  "keywords": [
+    "visual-paradigm",
+    "uml",
+    "erd",
+    "diagrams",
+    "architecture",
+    "modeling",
+    "self-hosted",
+    "docker"
+  ],
+  "author": "Miguel & Antigravity",
+  "license": "MIT"
+}

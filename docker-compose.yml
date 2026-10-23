@@ -1,0 +1,22 @@
+services:
+  invisual-disparity:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/miguelthemann/invisual-disparity:latest
+    container_name: invisual-disparity
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8090}:8090"
+    environment:
+      - NODE_ENV=production
+      - PORT=8090
+      - DATA_DIR=/app/data
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8090/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
