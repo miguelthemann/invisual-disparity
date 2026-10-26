@@ -26,6 +26,7 @@ export const Canvas: React.FC = () => {
     deleteNode,
     deleteEdge,
     updateCanvasView,
+    commitHistory,
     activeRelType,
   } = useProject();
 
@@ -168,7 +169,10 @@ export const Canvas: React.FC = () => {
 
   const handleMouseUp = () => {
     setIsPanning(false);
-    setDraggingNodeId(null);
+    if (draggingNodeId) {
+      commitHistory();
+      setDraggingNodeId(null);
+    }
     setConnectionStart(null);
   };
 
@@ -217,6 +221,11 @@ export const Canvas: React.FC = () => {
   // Connection Port Drop on Target Node
   const handleNodeMouseUp = (e: React.MouseEvent, targetNode: DiagramNode) => {
     e.stopPropagation();
+    // Ensure drag state is always cleared when releasing over a node
+    if (draggingNodeId) {
+      commitHistory();
+      setDraggingNodeId(null);
+    }
     if (connectionStart && connectionStart.nodeId !== targetNode.id) {
       addEdge(connectionStart.nodeId, targetNode.id, activeRelType);
     }

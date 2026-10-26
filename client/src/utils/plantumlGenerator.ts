@@ -136,13 +136,21 @@ export function generatePlantUML(
   if (diagramType === 'class') {
     for (const node of nodes) {
       const isInterface = node.type === 'uml_interface';
-      const kind = isInterface ? 'interface' : 'class';
+      const isEnum = node.type === 'uml_enum';
+      const kind = isInterface ? 'interface' : isEnum ? 'enum' : 'class';
       out += `${kind} "${node.title}" as ${sanitize(node.id)} {\n`;
-      for (const attr of node.attributes || []) {
-        out += `  ${attr.visibility}${attr.name} : ${attr.type}\n`;
-      }
-      for (const m of node.methods || []) {
-        out += `  ${m.visibility}${m.name}(${m.parameters || ''}) : ${m.returnType}\n`;
+      if (isEnum) {
+        const literals = node.enumLiterals || (node.attributes || []).map(a => a.name);
+        for (const lit of literals) {
+          out += `  ${lit}\n`;
+        }
+      } else {
+        for (const attr of node.attributes || []) {
+          out += `  ${attr.visibility}${attr.name} : ${attr.type}\n`;
+        }
+        for (const m of node.methods || []) {
+          out += `  ${m.visibility}${m.name}(${m.parameters || ''}) : ${m.returnType}\n`;
+        }
       }
       out += `}\n\n`;
     }
@@ -173,6 +181,41 @@ export function generatePlantUML(
         default:
           out += `${s} --> ${t} : ${edge.label || ''}\n`;
           break;
+      }
+    }
+  } else if (diagramType === 'erd') {
+    for (const node of nodes) {
+      out += `entity "${node.title}" as ${sanitize(node.id)} {\n`;
+      const pkCols = (node.columns || []).filter(c => c.isPk);
+      const otherCols = (node.columns || []).filter(c => !c.isPk);
+
+      for (const col of pkCols) {
+        out += `  * ${col.name} : ${col.type} <<PK>>\n`;
+      }
+      if (pkCols.length > 0 && otherCols.length > 0) {
+        out += `  --\n`;
+      }
+      for (const col of otherCols) {
+        const marker = col.isNullable ? '' : '* ';
+        const fkBadge = col.isFk ? ' <<FK>>' : '';
+        out += `  ${marker}${col.name} : ${col.type}${fkBadge}\n`;
+      }
+      out += `}\n\n`;
+    }
+
+    for (const edge of edges) {
+      const src = nodeMap.get(edge.sourceId);
+      const tgt = nodeMap.get(edge.targetId);
+      if (!src || !tgt) continue;
+      const s = sanitize(src.id);
+      const t = sanitize(tgt.id);
+
+      if (edge.type === 'crows_foot_one_to_many') {
+        out += `${s} ||--o{ ${t} : "${edge.label || 'has'}"\n`;
+      } else if (edge.type === 'crows_foot_one_to_one') {
+        out += `${s} ||--|| ${t} : "${edge.label || 'has'}"\n`;
+      } else {
+        out += `${s} }o--o{ ${t} : "${edge.label || 'relates'}"\n`;
       }
     }
   } else if (diagramType === 'sequence') {

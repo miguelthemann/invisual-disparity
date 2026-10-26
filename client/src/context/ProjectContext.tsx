@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { Project, Diagram, DiagramNode, DiagramEdge, DiagramType, NodeType, RelationshipType } from '../types';
 import { CLEAN_PROJECT, SAMPLE_PROJECT } from '../utils/sampleData';
 
@@ -31,6 +31,7 @@ interface ProjectContextType {
   updateEdge: (id: string, updates: Partial<DiagramEdge>) => void;
   deleteEdge: (id: string) => void;
   updateCanvasView: (zoom: number, pan: { x: number; y: number }) => void;
+  commitHistory: (customProj?: Project) => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -49,31 +50,46 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const [history, setHistory] = useState<Project[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const hasUserEditedRef = useRef(false);
 
   // Active diagram helper
   const activeDiagram = project.diagrams.find(d => d.id === project.activeDiagramId) || project.diagrams[0];
 
   const pushHistory = (newProj: Project) => {
+    hasUserEditedRef.current = true;
+    const cloned = JSON.parse(JSON.stringify(newProj));
     setHistory(prev => {
-      const sliced = prev.slice(0, historyIndex + 1);
-      return [...sliced, JSON.parse(JSON.stringify(newProj))].slice(-25); // keep last 25 states
+      const currentIdx = Math.max(0, Math.min(historyIndex, prev.length - 1));
+      const sliced = prev.slice(0, currentIdx + 1);
+      const next = [...sliced, cloned];
+      if (next.length > 25) {
+        next.shift();
+      }
+      return next;
     });
-    setHistoryIndex(prev => prev + 1);
+    setHistoryIndex(prev => {
+      const nextIdx = prev + 1;
+      return nextIdx >= 25 ? 24 : nextIdx;
+    });
+  };
+
+  const commitHistory = (customProj?: Project) => {
+    pushHistory(customProj || project);
   };
 
   const undo = () => {
-    if (historyIndex > 0) {
-      const prev = history[historyIndex - 1];
-      setHistoryIndex(historyIndex - 1);
-      setProject(JSON.parse(JSON.stringify(prev)));
+    if (historyIndex > 0 && history[historyIndex - 1]) {
+      const targetIdx = historyIndex - 1;
+      setHistoryIndex(targetIdx);
+      setProject(JSON.parse(JSON.stringify(history[targetIdx])));
     }
   };
 
   const redo = () => {
-    if (historyIndex < history.length - 1) {
-      const next = history[historyIndex + 1];
-      setHistoryIndex(historyIndex + 1);
-      setProject(JSON.parse(JSON.stringify(next)));
+    if (historyIndex < history.length - 1 && history[historyIndex + 1]) {
+      const targetIdx = historyIndex + 1;
+      setHistoryIndex(targetIdx);
+      setProject(JSON.parse(JSON.stringify(history[targetIdx])));
     }
   };
 
@@ -110,6 +126,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   // Auto-save debounce
   useEffect(() => {
+    if (!hasUserEditedRef.current) return;
     const timer = setTimeout(() => {
       if (project && project.id) {
         saveProject();
@@ -408,6 +425,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const updateNode = (id: string, updates: Partial<DiagramNode>) => {
+    hasUserEditedRef.current = true;
     setProject(prev => {
       const updated = {
         ...prev,
@@ -559,6 +577,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         updateEdge,
         deleteEdge,
         updateCanvasView,
+        commitHistory,
         undo,
         redo,
         canUndo: historyIndex > 0,
