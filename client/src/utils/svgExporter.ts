@@ -74,13 +74,24 @@ export function exportDiagramToSvg(diagram: Diagram): string {
   svg += `      <polygon points="8,0 16,5 8,10 0,5" fill="#94a3b8" stroke="#94a3b8" stroke-width="1" />\n`;
   svg += `    </marker>\n`;
 
-  svg += `    <marker id="crows-foot-many" viewBox="0 0 16 16" refX="15" refY="8" markerWidth="14" markerHeight="14" orient="auto-start-reverse">\n`;
-  svg += `      <path d="M 14 1 L 1 8 L 14 15 M 1 8 L 14 8" fill="none" stroke="#38bdf8" stroke-width="1.5" />\n`;
+  svg += `    <marker id="marker-crows-foot-one" viewBox="0 0 16 16" refX="16" refY="8" markerWidth="12" markerHeight="12" orient="auto-start-reverse">\n`;
+  svg += `      <line x1="6" y1="2" x2="6" y2="14" stroke="#38bdf8" stroke-width="2" />\n`;
+  svg += `      <line x1="12" y1="2" x2="12" y2="14" stroke="#38bdf8" stroke-width="2" />\n`;
   svg += `    </marker>\n`;
 
-  svg += `    <marker id="crows-foot-one" viewBox="0 0 12 16" refX="6" refY="8" markerWidth="10" markerHeight="14" orient="auto-start-reverse">\n`;
-  svg += `      <line x1="3" y1="2" x2="3" y2="14" stroke="#38bdf8" stroke-width="1.5" />\n`;
-  svg += `      <line x1="8" y1="2" x2="8" y2="14" stroke="#38bdf8" stroke-width="1.5" />\n`;
+  svg += `    <marker id="marker-crows-foot-many" viewBox="0 0 20 16" refX="20" refY="8" markerWidth="16" markerHeight="14" orient="auto-start-reverse">\n`;
+  svg += `      <circle cx="5" cy="8" r="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />\n`;
+  svg += `      <path d="M 10 2 L 20 8 L 10 14 M 10 8 L 20 8" fill="none" stroke="#38bdf8" stroke-width="1.5" />\n`;
+  svg += `    </marker>\n`;
+
+  svg += `    <marker id="marker-crows-foot-one-start" viewBox="0 0 16 16" refX="0" refY="8" markerWidth="12" markerHeight="12" orient="auto-start-reverse">\n`;
+  svg += `      <line x1="4" y1="2" x2="4" y2="14" stroke="#38bdf8" stroke-width="2" />\n`;
+  svg += `      <line x1="10" y1="2" x2="10" y2="14" stroke="#38bdf8" stroke-width="2" />\n`;
+  svg += `    </marker>\n`;
+
+  svg += `    <marker id="marker-crows-foot-many-start" viewBox="0 0 20 16" refX="0" refY="8" markerWidth="16" markerHeight="14" orient="auto-start-reverse">\n`;
+  svg += `      <circle cx="15" cy="8" r="3.5" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" />\n`;
+  svg += `      <path d="M 10 2 L 0 8 L 10 14 M 10 8 L 0 8" fill="none" stroke="#38bdf8" stroke-width="1.5" />\n`;
   svg += `    </marker>\n`;
 
   // Grid pattern
@@ -300,7 +311,13 @@ function renderNodeSvg(node: DiagramNode): string {
       out += `  <g transform="translate(${node.x}, ${node.y})">\n`;
       out += `    <polygon points="0,0 ${w - 15},0 ${w},15 ${w},${h} 0,${h}" fill="#451a03" stroke="#d97706" stroke-width="1.5" />\n`;
       out += `    <polygon points="${w - 15},0 ${w - 15},15 ${w},15" fill="#78350f" stroke="#d97706" stroke-width="1" />\n`;
-      out += `    <text x="12" y="24" class="text-sub" fill="#fde68a">${escapeXml(node.description || node.title)}</text>\n`;
+      const noteRaw = node.description || node.title || '';
+      const lines = noteRaw.split('\n');
+      out += `    <text x="12" y="24" class="text-sub" fill="#fde68a">\n`;
+      lines.forEach((line, idx) => {
+        out += `      <tspan x="12" dy="${idx === 0 ? '0' : '1.4em'}">${escapeXml(line)}</tspan>\n`;
+      });
+      out += `    </text>\n`;
       out += `  </g>\n`;
       break;
     }

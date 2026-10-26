@@ -195,6 +195,11 @@ export const Canvas: React.FC = () => {
   // Connection Port Drop on Target Node
   const handleNodeMouseUp = (e: React.MouseEvent, targetNode: DiagramNode) => {
     e.stopPropagation();
+    // Ensure drag state is always cleared when releasing over a node
+    if (draggingNodeId) {
+      commitHistory();
+      setDraggingNodeId(null);
+    }
     if (connectionStart && connectionStart.nodeId !== targetNode.id) {
       addEdge(connectionStart.nodeId, targetNode.id, activeRelType);
       setConnectionStart(null);
