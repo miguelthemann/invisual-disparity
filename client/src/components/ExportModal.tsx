@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { generateMermaid, generatePlantUML } from '../utils/plantumlGenerator';
-import { X, Copy, Check, Download, FileCode2, Share2, FileJson, Image } from './Icons';
+import { X, Copy, Check, Download, FileCode2, Share2, FileJson, Image } from 'lucide-react';
 
 interface ExportModalProps {
   isOpen: boolean;

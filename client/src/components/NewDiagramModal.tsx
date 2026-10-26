@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { DiagramType } from '../types';
-import { X, FileCode, Database, Workflow, User, Layers, Plus } from './Icons';
+import { X, FileCode, Database, Workflow, User, Layers, Plus } from 'lucide-react';
 
 interface NewDiagramModalProps {
   isOpen: boolean;

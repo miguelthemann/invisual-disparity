@@ -16,7 +16,7 @@ import {
   ChevronRight,
   Boxes,
   Workflow
-} from './Icons';
+} from 'lucide-react';
 
 interface SidebarProps {
   onOpenNewDiagramModal: () => void;

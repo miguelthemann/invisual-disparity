@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { generateSqlDDL, SqlDialect } from '../utils/sqlGenerator';
-import { X, Copy, Check, Download, Database } from './Icons';
+import { X, Copy, Check, Download, Database } from 'lucide-react';
 
 interface DDLGenModalProps {
   isOpen: boolean;

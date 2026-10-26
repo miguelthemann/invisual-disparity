@@ -11,7 +11,7 @@ import {
   AlignLeft,
   ChevronRight,
   Database
-} from './Icons';
+} from 'lucide-react';
 
 export const PropertyInspector: React.FC = () => {
   const {

@@ -12,7 +12,7 @@ import {
   Database, 
   FileCode, 
   Maximize2 
-} from './Icons';
+} from 'lucide-react';
 
 export const Canvas: React.FC = () => {
   const {
