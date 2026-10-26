@@ -36,6 +36,8 @@ export class DatabaseService {
       if (sqliteModule && sqliteModule.DatabaseSync) {
         this.sqliteDb = new sqliteModule.DatabaseSync(this.dbPath);
         this.sqliteDb.exec(`
+          PRAGMA journal_mode = WAL;
+          PRAGMA foreign_keys = ON;
           CREATE TABLE IF NOT EXISTS projects (
             id TEXT PRIMARY KEY,
             name TEXT NOT NULL,
@@ -99,6 +101,7 @@ export class DatabaseService {
   }
 
   public getProject(id: string): ProjectData | null {
+    if (!id || typeof id !== 'string') return null;
     if (this.isUsingSqlite && this.sqliteDb) {
       const stmt = this.sqliteDb.prepare('SELECT id, name, description, data, created_at, updated_at FROM projects WHERE id = ?');
       const row = stmt.get(id);
@@ -123,6 +126,19 @@ export class DatabaseService {
   }
 
   public saveProject(project: ProjectData): void {
+    if (!project || !project.id) {
+      throw new Error('Project must have a valid id');
+    }
+
+    project.name = (project.name && typeof project.name === 'string' ? project.name.trim() : '') || 'Untitled Project';
+    project.description = project.description || '';
+    if (!Array.isArray(project.diagrams)) {
+      project.diagrams = [];
+    }
+    if (!project.activeDiagramId && project.diagrams.length > 0) {
+      project.activeDiagramId = project.diagrams[0].id;
+    }
+
     project.updatedAt = new Date().toISOString();
     if (!project.createdAt) {
       project.createdAt = project.updatedAt;
@@ -161,6 +177,7 @@ export class DatabaseService {
   }
 
   public deleteProject(id: string): boolean {
+    if (!id || typeof id !== 'string') return false;
     if (this.isUsingSqlite && this.sqliteDb) {
       const stmt = this.sqliteDb.prepare('DELETE FROM projects WHERE id = ?');
       const result = stmt.run(id);
