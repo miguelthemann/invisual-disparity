@@ -64,9 +64,13 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`=======================================================`);
 });
 
-process.on('SIGTERM', () => {
-  console.log('[Server] SIGTERM signal received: closing HTTP server');
+const gracefulShutdown = (signal: string) => {
+  console.log(`[Server] ${signal} signal received: closing HTTP server`);
   server.close(() => {
     console.log('[Server] HTTP server closed');
+    process.exit(0);
   });
-});
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

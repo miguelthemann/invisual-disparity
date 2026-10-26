@@ -26,14 +26,18 @@ export function createApiRouter(db: DatabaseService): Router {
   // Create new project
   router.post('/projects', (req: Request, res: Response) => {
     try {
-      const { name, description } = req.body;
+      const rawName = req.body?.name;
+      const rawDesc = req.body?.description;
+      const name = (typeof rawName === 'string' ? rawName.trim() : '') || 'Untitled Project';
+      const description = (typeof rawDesc === 'string' ? rawDesc.trim() : '') || 'Visual software architecture and data modeling project';
+
       const newId = 'proj_' + Math.random().toString(36).substring(2, 9);
       const initialDiagramId = 'diag_main';
 
       const newProject: ProjectData = {
         id: newId,
-        name: name || 'Untitled Project',
-        description: description || 'Visual software architecture and data modeling project',
+        name,
+        description,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         activeDiagramId: initialDiagramId,
@@ -61,7 +65,11 @@ export function createApiRouter(db: DatabaseService): Router {
   // Get single project
   router.get('/projects/:id', (req: Request, res: Response) => {
     try {
-      const project = db.getProject(req.params.id);
+      const id = req.params.id;
+      if (!id) {
+        return res.status(400).json({ error: 'Project ID is required' });
+      }
+      const project = db.getProject(id);
       if (!project) {
         return res.status(404).json({ error: 'Project not found' });
       }
@@ -74,11 +82,20 @@ export function createApiRouter(db: DatabaseService): Router {
   // Update / auto-save project
   router.put('/projects/:id', (req: Request, res: Response) => {
     try {
-      const projectData: ProjectData = req.body;
-      if (!projectData || !projectData.id) {
-        return res.status(400).json({ error: 'Invalid project payload' });
+      const id = req.params.id;
+      if (!id) {
+        return res.status(400).json({ error: 'Project ID is required in URL path' });
       }
-      projectData.id = req.params.id;
+      if (!req.body || typeof req.body !== 'object') {
+        return res.status(400).json({ error: 'Invalid project payload: body must be a JSON object' });
+      }
+      const projectData: ProjectData = req.body;
+      projectData.id = id;
+      projectData.name = (typeof projectData.name === 'string' ? projectData.name.trim() : '') || 'Untitled Project';
+      if (!Array.isArray(projectData.diagrams)) {
+        projectData.diagrams = [];
+      }
+
       db.saveProject(projectData);
       res.json({ success: true, updatedAt: projectData.updatedAt });
     } catch (err: any) {
@@ -89,7 +106,11 @@ export function createApiRouter(db: DatabaseService): Router {
   // Delete project
   router.delete('/projects/:id', (req: Request, res: Response) => {
     try {
-      const success = db.deleteProject(req.params.id);
+      const id = req.params.id;
+      if (!id) {
+        return res.status(400).json({ error: 'Project ID is required' });
+      }
+      const success = db.deleteProject(id);
       if (!success) {
         return res.status(404).json({ error: 'Project not found' });
       }
@@ -102,9 +123,12 @@ export function createApiRouter(db: DatabaseService): Router {
   // Import project
   router.post('/projects/import', (req: Request, res: Response) => {
     try {
+      if (!req.body || typeof req.body !== 'object') {
+        return res.status(400).json({ error: 'Invalid project payload: body must be a JSON object' });
+      }
       const projectData: ProjectData = req.body;
-      if (!projectData.name || !Array.isArray(projectData.diagrams)) {
-        return res.status(400).json({ error: 'Invalid project format' });
+      if (!projectData.name || typeof projectData.name !== 'string' || !Array.isArray(projectData.diagrams)) {
+        return res.status(400).json({ error: 'Invalid project format: name and diagrams array are required' });
       }
       // Assign new id to avoid collisions
       projectData.id = 'proj_' + Math.random().toString(36).substring(2, 9);
