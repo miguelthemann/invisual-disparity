@@ -16,7 +16,7 @@ import {
   RefreshCw,
   FolderOpen,
   Boxes
-} from 'lucide-react';
+} from './Icons';
 
 interface NavbarProps {
   onOpenDDLModal: () => void;

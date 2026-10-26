@@ -17,7 +17,7 @@ import {
   Diamond,
   Spline,
   Share2
-} from 'lucide-react';
+} from './Icons';
 
 export const ToolPalette: React.FC = () => {
   const { activeDiagram, addNode, activeRelType, setActiveRelType } = useProject();

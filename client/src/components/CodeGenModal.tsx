@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { generateCode, TargetLanguage } from '../utils/codeGenerator';
-import { X, Copy, Check, Download, Code2 } from 'lucide-react';
+import { X, Copy, Check, Download, Code2 } from './Icons';
 
 interface CodeGenModalProps {
   isOpen: boolean;
