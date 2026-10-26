@@ -156,7 +156,9 @@ export function generateSqlDDL(
             const sourceTable = tableMap.get(edge.sourceId);
             if (sourceTable && sourceTable.id !== table.id) {
               const srcRawName = sourceTable.title.toLowerCase().replace(/[^a-z0-9_]/g, '_');
-              const fkCol = table.columns?.find(c => c.isFk) || { name: `${srcRawName}_id` };
+              const fkCol = table.columns?.find(c => c.isFk && c.name.toLowerCase().includes(srcRawName))
+                || table.columns?.find(c => c.name.toLowerCase() === `${srcRawName}_id`)
+                || { name: `${srcRawName}_id` };
               const pkCol = sourceTable.columns?.find(c => c.isPk) || { name: 'id' };
 
               const quotedSrc = quoteIdentifier(srcRawName, dialect);
@@ -192,7 +194,9 @@ export function generateSqlDDL(
           const srcRaw = sourceTable.title.toLowerCase().replace(/[^a-z0-9_]/g, '_');
           const tgtRaw = targetTable.title.toLowerCase().replace(/[^a-z0-9_]/g, '_');
 
-          const fkCol = targetTable.columns?.find(c => c.isFk) || { name: `${srcRaw}_id` };
+          const fkCol = targetTable.columns?.find(c => c.isFk && c.name.toLowerCase().includes(srcRaw))
+            || targetTable.columns?.find(c => c.name.toLowerCase() === `${srcRaw}_id`)
+            || { name: `${srcRaw}_id` };
           const pkCol = sourceTable.columns?.find(c => c.isPk) || { name: 'id' };
 
           const qTgt = quoteIdentifier(tgtRaw, dialect);
