@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { generateMermaid, generatePlantUML } from '../utils/plantumlGenerator';
+import { exportDiagramToSvg } from '../utils/svgExporter';
 import { X, Copy, Check, Download, FileCode2, Share2, FileJson, Image } from 'lucide-react';
 
 interface ExportModalProps {
@@ -18,13 +19,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
   const mermaidText = generateMermaid(activeDiagram.type, activeDiagram.nodes, activeDiagram.edges);
   const plantumlText = generatePlantUML(activeDiagram.type, activeDiagram.nodes, activeDiagram.edges);
   const jsonText = JSON.stringify(project, null, 2);
+  const svgText = exportDiagramToSvg(activeDiagram);
 
   const getExportContent = () => {
     switch (tab) {
       case 'mermaid': return mermaidText;
       case 'plantuml': return plantumlText;
       case 'json': return jsonText;
-      case 'svg': return 'SVG Vector Export ready for download.';
+      case 'svg': return svgText;
     }
   };
 
@@ -36,18 +38,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
 
   const handleDownload = () => {
     if (tab === 'svg') {
-      const svgElement = document.getElementById('canvas-svg');
-      if (svgElement) {
-        const serializer = new XMLSerializer();
-        const svgString = serializer.serializeToString(svgElement);
-        const blob = new Blob([svgString], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${activeDiagram.name.replace(/\s+/g, '_')}.svg`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
+      const svgString = exportDiagramToSvg(activeDiagram);
+      const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${activeDiagram.name.replace(/\s+/g, '_')}.svg`;
+      a.click();
+      URL.revokeObjectURL(url);
       return;
     }
 

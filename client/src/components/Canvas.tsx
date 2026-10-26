@@ -26,6 +26,7 @@ export const Canvas: React.FC = () => {
     deleteNode,
     deleteEdge,
     updateCanvasView,
+    commitHistory,
     activeRelType,
   } = useProject();
 
@@ -142,7 +143,10 @@ export const Canvas: React.FC = () => {
 
   const handleMouseUp = () => {
     setIsPanning(false);
-    setDraggingNodeId(null);
+    if (draggingNodeId) {
+      commitHistory();
+      setDraggingNodeId(null);
+    }
     setConnectionStart(null);
   };
 
