@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onOpenNewDiagramModal }) => {
           <Boxes className="w-5 h-5 text-sky-400 shrink-0" />
           <div className="truncate">
             <h2 className="font-bold text-sm text-slate-100 truncate">{project.name}</h2>
-            <p className="text-[10px] text-slate-400 truncate">Visual Paradigm Suite</p>
+            <p className="text-[10px] text-slate-400 truncate">Architecture & Modeling Suite</p>
           </div>
         </div>
         <button

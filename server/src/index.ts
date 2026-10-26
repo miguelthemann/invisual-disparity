@@ -4,7 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { DatabaseService } from './db.js';
 import { createApiRouter } from './routes.js';
-import { DEFAULT_SAMPLE_PROJECT } from './sampleProject.js';
+import { DEFAULT_CLEAN_PROJECT, DEFAULT_SAMPLE_PROJECT } from './sampleProject.js';
 
 const PORT = parseInt(process.env.PORT || '8090', 10);
 const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
@@ -14,9 +14,9 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-// Initialize DB and seed sample project if empty
+// Initialize DB and seed clean starter project if empty
 const db = new DatabaseService(DATA_DIR);
-db.seedIfEmpty(DEFAULT_SAMPLE_PROJECT);
+db.seedIfEmpty(DEFAULT_CLEAN_PROJECT);
 
 // Register API Routes
 app.use('/api', createApiRouter(db));
@@ -58,7 +58,7 @@ if (clientDistPath) {
 
 const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`=======================================================`);
-  console.log(`🚀 Invisual Disparity (Visual Paradigm Alternative)`);
+  console.log(`🚀 Invisual Disparity (Architecture & Modeling Suite)`);
   console.log(`📡 Server running on http://0.0.0.0:${PORT}`);
   console.log(`💾 Data stored at: ${DATA_DIR}`);
   console.log(`=======================================================`);

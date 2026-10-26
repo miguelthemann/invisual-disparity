@@ -1,9 +1,30 @@
 import { ProjectData } from './db.js';
 
+export const DEFAULT_CLEAN_PROJECT: ProjectData = {
+  id: 'proj_default',
+  name: 'Novo Projeto de Modelagem',
+  description: 'Arquitetura de software e modelagem de sistemas',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  activeDiagramId: 'diag_initial',
+  diagrams: [
+    {
+      id: 'diag_initial',
+      name: 'Class Diagram',
+      type: 'class',
+      description: 'Diagrama de classes do domínio',
+      zoom: 1,
+      pan: { x: 50, y: 50 },
+      nodes: [],
+      edges: [],
+    },
+  ],
+};
+
 export const DEFAULT_SAMPLE_PROJECT: ProjectData = {
   id: 'proj_ecommerce_starter',
-  name: 'E-Commerce Enterprise Architecture',
-  description: 'Visual Paradigm demonstration project containing Domain Model, Database ERD, Checkout Sequence, and System Use Cases',
+  name: 'E-Commerce Enterprise Architecture (Exemplo)',
+  description: 'Demonstration project containing Domain Model, Database ERD, Checkout Sequence, and System Use Cases',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   activeDiagramId: 'diag_class_model',

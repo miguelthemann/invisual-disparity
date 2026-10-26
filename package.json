@@ -1,7 +1,7 @@
 {
   "name": "invisual-disparity",
   "version": "1.0.0",
-  "description": "A self-hostable, Docker-deployable Visual Paradigm alternative for UML, ERD, and visual software architecture modeling",
+  "description": "A self-hostable, Docker-deployable visual modeling suite for UML, ERD, and software architecture",
   "scripts": {
     "build:client": "cd client && npm install && npm run build",
     "build:server": "cd server && npm install && npm run build",

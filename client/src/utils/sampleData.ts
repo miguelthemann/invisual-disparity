@@ -1,9 +1,30 @@
 import { Project } from '../types';
 
+export const CLEAN_PROJECT: Project = {
+  id: 'proj_default',
+  name: 'Novo Projeto',
+  description: 'Arquitetura de software e modelagem de sistemas',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  activeDiagramId: 'diag_initial',
+  diagrams: [
+    {
+      id: 'diag_initial',
+      name: 'Class Diagram',
+      type: 'class',
+      description: 'Diagrama de classes do domínio',
+      zoom: 1,
+      pan: { x: 50, y: 50 },
+      nodes: [],
+      edges: [],
+    },
+  ],
+};
+
 export const SAMPLE_PROJECT: Project = {
   id: 'proj_ecommerce_starter',
-  name: 'E-Commerce Enterprise Architecture',
-  description: 'Visual Paradigm demonstration project containing Domain Model, Database ERD, Checkout Sequence, and System Use Cases',
+  name: 'E-Commerce Enterprise Architecture (Exemplo)',
+  description: 'Projeto demonstrativo contendo Modelo de Domínio, Base de Dados ERD, Sequência de Checkout e Casos de Uso',
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
   activeDiagramId: 'diag_class_model',

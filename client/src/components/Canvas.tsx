@@ -95,6 +95,24 @@ export const Canvas: React.FC = () => {
     }
   };
 
+  // Global drag release listener
+  useEffect(() => {
+    const handleGlobalMouseUp = () => {
+      setDraggingNodeId(null);
+      setIsPanning(false);
+      setConnectionStart(null);
+    };
+
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+    window.addEventListener('pointerup', handleGlobalMouseUp);
+    window.addEventListener('blur', handleGlobalMouseUp);
+    return () => {
+      window.removeEventListener('mouseup', handleGlobalMouseUp);
+      window.removeEventListener('pointerup', handleGlobalMouseUp);
+      window.removeEventListener('blur', handleGlobalMouseUp);
+    };
+  }, []);
+
   // Handle Pan Start
   const handleMouseDown = (e: React.MouseEvent) => {
     // Only pan if clicking canvas background or middle click or space pressed
@@ -107,6 +125,14 @@ export const Canvas: React.FC = () => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
+    // If no mouse button is held, guarantee release of all drag states
+    if (e.buttons === 0) {
+      if (draggingNodeId) setDraggingNodeId(null);
+      if (isPanning) setIsPanning(false);
+      if (connectionStart) setConnectionStart(null);
+      return;
+    }
+
     if (isPanning) {
       updateCanvasView(zoom, {
         x: e.clientX - panStart.x,
@@ -193,8 +219,9 @@ export const Canvas: React.FC = () => {
     e.stopPropagation();
     if (connectionStart && connectionStart.nodeId !== targetNode.id) {
       addEdge(connectionStart.nodeId, targetNode.id, activeRelType);
-      setConnectionStart(null);
     }
+    setConnectionStart(null);
+    setDraggingNodeId(null);
   };
 
   return (

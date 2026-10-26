@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Project, Diagram, DiagramNode, DiagramEdge, DiagramType, NodeType, RelationshipType } from '../types';
-import { SAMPLE_PROJECT } from '../utils/sampleData';
+import { CLEAN_PROJECT, SAMPLE_PROJECT } from '../utils/sampleData';
 
 interface ProjectContextType {
   project: Project;
@@ -14,6 +14,7 @@ interface ProjectContextType {
   loadProject: (id?: string) => Promise<void>;
   saveProject: () => Promise<void>;
   createNewProject: (name: string, description: string) => Promise<void>;
+  loadSampleProject: () => void;
   importProject: (data: Project) => Promise<void>;
   resetToSample: () => Promise<void>;
   setActiveDiagramId: (id: string) => void;
@@ -39,7 +40,7 @@ interface ProjectContextType {
 const ProjectContext = createContext<ProjectContextType | null>(null);
 
 export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [project, setProject] = useState<Project>(SAMPLE_PROJECT);
+  const [project, setProject] = useState<Project>(CLEAN_PROJECT);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [connectingSource, setConnectingSource] = useState<{ nodeId: string; anchor: 'top' | 'right' | 'bottom' | 'left' } | null>(null);
@@ -97,9 +98,9 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } catch (e) {
       console.log('Using local state, could not reach API', e);
     }
-    // Fallback to initial sample
-    setProject(SAMPLE_PROJECT);
-    setHistory([JSON.parse(JSON.stringify(SAMPLE_PROJECT))]);
+    // Fallback to initial clean project
+    setProject(CLEAN_PROJECT);
+    setHistory([JSON.parse(JSON.stringify(CLEAN_PROJECT))]);
     setHistoryIndex(0);
   }, []);
 
@@ -184,6 +185,14 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
     } catch (e) {
       setProject(SAMPLE_PROJECT);
     }
+  };
+
+  const loadSampleProject = () => {
+    const sample = JSON.parse(JSON.stringify(SAMPLE_PROJECT));
+    setProject(sample);
+    setSelectedNodeId(null);
+    setSelectedEdgeId(null);
+    pushHistory(sample);
   };
 
   const setActiveDiagramId = (id: string) => {
@@ -533,6 +542,7 @@ export const ProjectProvider: React.FC<{ children: React.ReactNode }> = ({ child
         loadProject,
         saveProject,
         createNewProject,
+        loadSampleProject,
         importProject,
         resetToSample,
         setActiveDiagramId,

@@ -1,6 +1,6 @@
 # Invisual Disparity
 
-> **A self-hostable, Docker-deployable Visual Paradigm alternative for software architecture, UML modeling, and database design.**
+> **A self-hostable, Docker-deployable visual modeling suite for software architecture, UML diagrams, and database design.**
 
 [![Docker Deployable](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](file:///home/miguel/invisual-disparity/docker-compose.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-22+-339933?logo=node.js&logoColor=white)](file:///home/miguel/invisual-disparity/server)
@@ -10,9 +10,9 @@
 
 ---
 
-## 🎯 O Intuito do Visual Paradigm (Core Purpose)
+## 🎯 Propósito & Funcionalidades (Core Features)
 
-O **Invisual Disparity** foi concebido não como uma cópia 1:1 de interfaces legadas de desktop, mas sim para capturar a **verdadeira essência e utilidade prática do Visual Paradigm** numa aplicação web moderna, ultra-rápida, leve e 100% self-hosted:
+O **Invisual Disparity** é uma suite de modelação visual e engenharia de software concebida para ser moderna, ultra-rápida, leve e 100% self-hosted em Docker:
 
 1. **Modelagem de Software & Arquitetura**:
    - **Diagramas de Classes UML**: Classes completas com estereótipos (`<<interface>>`, `<<entity>>`, `<<service>>`, `<<aggregate>>`), modificadores de visibilidade (`+` público, `-` privado, `#` protegido, `~` pacote), tipagem de atributos e assinaturas de métodos.
@@ -21,7 +21,7 @@ O **Invisual Disparity** foi concebido não como uma cópia 1:1 de interfaces le
    - **Diagramas de Casos de Uso**: Atores do sistema, balões de casos de uso, fronteiras de subsistema (*System Boundary*) e relacionamentos `<<include>>` / `<<extend>>`.
    - **Model Explorer & Dicionário de Dados**: Navegador em árvore com todos os elementos modelados através de múltiplos diagramas no mesmo projeto.
 
-2. **Engenharia Reversa & Geração de Código / DDL (A imagem de marca do Visual Paradigm)**:
+2. **Engenharia & Geração de Código / DDL Automática**:
    - **Gerador de DDL SQL**: Converte diagramas ERD em código SQL válido para **PostgreSQL**, **MySQL**, **SQLite** e **Oracle**, incluindo `CREATE TABLE`, `PRIMARY KEY`, tipos mapeados e `CONSTRAINT FOREIGN KEY ... REFERENCES`.
    - **Gerador de Código Multi-Linguagem**: Transforma o seu diagrama de classes em código pronto para produção em:
      - **TypeScript / JavaScript** (classes, interfaces, tipos, construtores e métodos)
